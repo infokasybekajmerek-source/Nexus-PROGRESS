@@ -1,0 +1,286 @@
+<!-- Top Navigation -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo">
+            <i class="fa-solid fa-graduation-cap"></i> Student Hub
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <span class="mode-badge" id="mode-toggle-btn" onclick="toggleMode()">
+                <i class="fa-solid fa-user-shield"></i> Куратор режимі
+            </span>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- STUDENT MODE VIEW -->
+    <div id="student-view">
+        <!-- Profile Switch -->
+        <div class="user-card">
+            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted);">ОҚУШЫ АТЫ-ЖӨНІ:</label>
+            <div class="user-input-group">
+                <input type="text" id="student-name-input" placeholder="Мысалы: Алихан Сұлтанов" value="Оқушы">
+                <button class="btn" onclick="saveStudentName()"><i class="fa-solid fa-check"></i> Сақтау</button>
+            </div>
+        </div>
+
+        <!-- Overall Progress -->
+        <div class="progress-card">
+            <div class="progress-header">
+                <div>
+                    <h2 style="font-size: 20px;" id="display-student-name">Сәлем, Оқушы! 👋</h2>
+                    <p style="font-size: 13px; opacity: 0.9; margin-top: 4px;">Тапсырмаларды орындап, оқу прогресіңді арттыр.</p>
+                </div>
+                <div style="font-size: 28px; font-weight: 700;" id="progress-percent">0%</div>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Dynamic Weeks & Tasks Container -->
+        <div id="weeks-container"></div>
+    </div>
+
+    <!-- CURATOR / TEACHER MODE VIEW -->
+    <div id="curator-view" class="admin-panel">
+        <div class="user-card" style="border-left: 4px solid var(--primary);">
+            <h3><i class="fa-solid fa-user-gear"></i> Куратор Басқару Панелі</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+                Оқушылардың орындаған тапсырмаларын қарау және жаңа апталық тесттер қосу.
+            </p>
+        </div>
+
+        <!-- Add New Task/Test Form -->
+        <div class="user-card">
+            <h4 style="margin-bottom: 12px;"><i class="fa-solid fa-plus-circle"></i> Жаңа тапсырма немесе тест қосу</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <input type="text" id="new-week-title" placeholder="Апта атауы (мысалы: 4-Апта: Алгоритмдер)">
+                <input type="text" id="new-task-text" placeholder="Тапсырма атауы (мысалы: 4.1 Массивтер есебін шығару)">
+                <input type="url" id="new-test-url" placeholder="Тест сілтемесі (Google Forms / Quizizz URL)">
+                <button class="btn" onclick="addNewContent()"><i class="fa-solid fa-cloud-arrow-up"></i> Қосу және Жаңарту</button>
+            </div>
+        </div>
+
+        <!-- Students Overview Table -->
+        <div class="user-card">
+            <h4><i class="fa-solid fa-chart-line"></i> Оқушылар прогресі (Бұл құрылғыдағы)</h4>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Оқушы аты</th>
+                        <th>Орындалғаны</th>
+                        <th>Прогресс</th>
+                    </tr>
+                </thead>
+                <tbody id="curator-student-table">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+        
+        <button class="btn btn-danger" onclick="resetAllData()"><i class="fa-solid fa-trash"></i> Барлық деректерді өшіру</button>
+    </div>
+
+</div>
+
+<script>
+    // Initial Default Data Architecture
+    const defaultData = {
+        weeks: [
+            {
+                id: "week1",
+                title: "1-Апта: Негізгі ұғымдар",
+                tasks: [
+                    { id: "w1_t1", text: "1.1 Дәріс материалын толық оқу" },
+                    { id: "w1_t2", text: "1.2 Практикалық тапсырманы орындау" }
+                ],
+                testUrl: "https://forms.google.com"
+            },
+            {
+                id: "week2",
+                title: "2-Апта: Шартты операторлар мен Циклдар",
+                tasks: [
+                    { id: "w2_t1", text: "2.1 Теориялық конспект дайындау" },
+                    { id: "w2_t2", text: "2.2 Есептер жинағын шешу" }
+                ],
+                testUrl: "https://quizizz.com"
+            }
+        ]
+    };
+
+    let currentMode = 'student'; // 'student' or 'curator'
+    let courseData = JSON.parse(localStorage.getItem('student_hub_course')) || defaultData;
+    let studentName = localStorage.getItem('student_hub_name') || 'Оқушы';
+
+    // Save Data Helpers
+    function saveData() {
+        localStorage.setItem('student_hub_course', JSON.stringify(courseData));
+    }
+
+    // Toggle Curator / Student Modes
+    function toggleMode() {
+        const studentView = document.getElementById('student-view');
+        const curatorView = document.getElementById('curator-view');
+        const modeBtn = document.getElementById('mode-toggle-btn');
+
+        if (currentMode === 'student') {
+            currentMode = 'curator';
+            studentView.style.display = 'none';
+            curatorView.style.display = 'block';
+            modeBtn.innerHTML = '<i class="fa-solid fa-user-graduate"></i> Оқушы режимі';
+            renderCuratorTable();
+        } else {
+            currentMode = 'student';
+            studentView.style.display = 'block';
+            curatorView.style.display = 'none';
+            modeBtn.innerHTML = '<i class="fa-solid fa-user-shield"></i> Куратор режимі';
+            renderStudentView();
+        }
+    }
+
+    // Render Student Dynamic Content
+    function renderStudentView() {
+        document.getElementById('student-name-input').value = studentName;
+        document.getElementById('display-student-name').innerText = `Сәлем, ${studentName}! 👋`;
+
+        const container = document.getElementById('weeks-container');
+        container.innerHTML = '';
+
+        let totalTasks = 0;
+        let completedTasks = 0;
+
+        courseData.weeks.forEach(week => {
+            const weekCard = document.createElement('div');
+            weekCard.className = 'week-card';
+
+            let tasksHTML = '';
+            week.tasks.forEach(task => {
+                totalTasks++;
+                const isChecked = localStorage.getItem(`task_${studentName}_${task.id}`) === 'true';
+                if (isChecked) completedTasks++;
+
+                tasksHTML += `
+                    <li class="task-item ${isChecked ? 'completed' : ''}" onclick="toggleTask('${task.id}', event)">
+                        <input type="checkbox" id="${task.id}" ${isChecked ? 'checked' : ''} onclick="event.stopPropagation(); toggleTask('${task.id}', event)">
+                        <span class="task-text">${task.text}</span>
+                    </li>
+                `;
+            });
+
+            weekCard.innerHTML = `
+                <div class="week-header">
+                    <span class="week-title">${week.title}</span>
+                    <i class="fa-regular fa-calendar-check" style="color: var(--primary);"></i>
+                </div>
+                <ul class="task-list">
+                    ${tasksHTML}
+                </ul>
+                ${week.testUrl ? `
+                    <div class="test-box">
+                        <div class="test-info">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                            <span>Апталық тест тапсырмасы</span>
+                        </div>
+                        <a href="${week.testUrl}" target="_blank" class="btn" style="text-decoration:none; font-size:13px; padding: 8px 14px;">
+                            Тестті бастау <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                ` : ''}
+            `;
+
+            container.appendChild(weekCard);
+        });
+
+        // Calculate Progress
+        const percent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+        document.getElementById('progress-percent').innerText = `${percent}%`;
+        document.getElementById('progress-fill').style.width = `${percent}%`;
+    }
+
+    // Toggle Task Completion State
+    function toggleTask(taskId, event) {
+        const storageKey = `task_${studentName}_${taskId}`;
+        const currentState = localStorage.getItem(storageKey) === 'true';
+        localStorage.setItem(storageKey, !currentState);
+        renderStudentView();
+    }
+
+    // Save Student Name
+    function saveStudentName() {
+        const inputVal = document.getElementById('student-name-input').value.trim();
+        if (inputVal) {
+            studentName = inputVal;
+            localStorage.setItem('student_hub_name', studentName);
+            renderStudentView();
+        }
+    }
+
+    // Curator Function: Add new week/task
+    function addNewContent() {
+        const weekTitle = document.getElementById('new-week-title').value.trim();
+        const taskText = document.getElementById('new-task-text').value.trim();
+        const testUrl = document.getElementById('new-test-url').value.trim();
+
+        if (!weekTitle || !taskText) {
+            alert('Өтініш, апта атауы мен тапсырма мәтінін енгізіңіз!');
+            return;
+        }
+
+        const newWeekId = 'week_' + Date.now();
+        const newTaskId = 'task_' + Date.now();
+
+        courseData.weeks.push({
+            id: newWeekId,
+            title: weekTitle,
+            tasks: [{ id: newTaskId, text: taskText }],
+            testUrl: testUrl || ''
+        });
+
+        saveData();
+        alert('Жаңа тапсырма сәтті қосылды!');
+        document.getElementById('new-week-title').value = '';
+        document.getElementById('new-task-text').value = '';
+        document.getElementById('new-test-url').value = '';
+    }
+
+    // Render Curator Table
+    function renderCuratorTable() {
+        const tbody = document.getElementById('curator-student-table');
+        tbody.innerHTML = '';
+
+        let totalTasks = 0;
+        courseData.weeks.forEach(w => totalTasks += w.tasks.length);
+
+        let completed = 0;
+        courseData.weeks.forEach(w => {
+            w.tasks.forEach(t => {
+                if (localStorage.getItem(`task_${studentName}_${t.id}`) === 'true') {
+                    completed++;
+                }
+            });
+        });
+
+        const percent = totalTasks > 0 ? Math.round((completed / totalTasks) * 100) : 0;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>${studentName}</strong></td>
+            <td>${completed} / ${totalTasks} тапсырма</td>
+            <td><span class="badge ${percent === 100 ? 'badge-success' : 'badge-warning'}">${percent}%</span></td>
+        `;
+        tbody.appendChild(tr);
+    }
+
+    // Reset Data
+    function resetAllData() {
+        if (confirm('Шын мәнінде барлық деректерді өшіргіңіз келе ме?')) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+
+    // Initial Load
+    renderStudentView();
+</script>
