@@ -1,14 +1,18 @@
-<!-- Top Navigation -->
+<!-- Header Navigation -->
 <nav class="navbar">
     <div class="nav-container">
-        <div class="logo">
-            <i class="fa-solid fa-graduation-cap"></i> Student Hub
+        <div class="logo-box">
+            <div class="logo-icon">
+                <i class="fa-solid fa-code"></i>
+            </div>
+            <div>
+                <div class="brand-title">infoLogia</div>
+                <span class="stream-tag">info-32 NEXUS</span>
+            </div>
         </div>
-        <div style="display: flex; gap: 10px; align-items: center;">
-            <span class="mode-badge" id="mode-toggle-btn" onclick="toggleMode()">
-                <i class="fa-solid fa-user-shield"></i> Куратор режимі
-            </span>
-        </div>
+        <span class="mode-badge" id="mode-toggle-btn" onclick="toggleMode()">
+            <i class="fa-solid fa-user-shield"></i> Куратор режимі
+        </span>
     </div>
 </nav>
 
@@ -16,110 +20,113 @@
 
     <!-- STUDENT MODE VIEW -->
     <div id="student-view">
-        <!-- Profile Switch -->
+        <!-- Hero Banner -->
+        <div class="hero-banner">
+            <div class="curator-info">
+                <span class="curator-badge"><i class="fa-solid fa-user-check"></i> Куратор: Аймерек</span>
+                <span>• info-32 NEXUS ағымы</span>
+            </div>
+            <h2 class="hero-title" id="display-student-name">Сәлем, Оқушы! 👋</h2>
+            <p style="color: var(--text-muted); font-size: 14px;">Оқу материалын орындап, птичка соғыңыз және прогресіңізді арттырыңыз.</p>
+
+            <div class="progress-box">
+                <div class="progress-header">
+                    <span>Жалпы оқу прогресі:</span>
+                    <span id="progress-percent" style="color: var(--accent-glow);">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Name Input Card -->
         <div class="user-card">
-            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted);">ОҚУШЫ АТЫ-ЖӨНІ:</label>
+            <label style="font-size: 13px; font-weight: 600; color: var(--text-muted);">ОҚУШЫ АТЫ-ЖӨНІН ЕНГІЗУ:</label>
             <div class="user-input-group">
                 <input type="text" id="student-name-input" placeholder="Мысалы: Алихан Сұлтанов" value="Оқушы">
-                <button class="btn" onclick="saveStudentName()"><i class="fa-solid fa-check"></i> Сақтау</button>
+                <button class="btn" onclick="saveStudentName()"><i class="fa-solid fa-floppy-disk"></i> Сақтау</button>
             </div>
         </div>
 
-        <!-- Overall Progress -->
-        <div class="progress-card">
-            <div class="progress-header">
-                <div>
-                    <h2 style="font-size: 20px;" id="display-student-name">Сәлем, Оқушы! 👋</h2>
-                    <p style="font-size: 13px; opacity: 0.9; margin-top: 4px;">Тапсырмаларды орындап, оқу прогресіңді арттыр.</p>
-                </div>
-                <div style="font-size: 28px; font-weight: 700;" id="progress-percent">0%</div>
-            </div>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="progress-fill"></div>
-            </div>
-        </div>
-
-        <!-- Dynamic Weeks & Tasks Container -->
+        <!-- Dynamic Weeks Container -->
         <div id="weeks-container"></div>
     </div>
 
-    <!-- CURATOR / TEACHER MODE VIEW -->
+    <!-- CURATOR MODE VIEW -->
     <div id="curator-view" class="admin-panel">
         <div class="user-card" style="border-left: 4px solid var(--primary);">
-            <h3><i class="fa-solid fa-user-gear"></i> Куратор Басқару Панелі</h3>
-            <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
-                Оқушылардың орындаған тапсырмаларын қарау және жаңа апталық тесттер қосу.
+            <h3><i class="fa-solid fa-user-gear" style="color: var(--primary);"></i> Куратор Басқару Панелі (Аймерек)</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">
+                info-32 NEXUS ағымына жаңа апталық тесттер қосу және оқушылар нәтижесін бақылау.
             </p>
         </div>
 
-        <!-- Add New Task/Test Form -->
+        <!-- Add Task Form -->
         <div class="user-card">
-            <h4 style="margin-bottom: 12px;"><i class="fa-solid fa-plus-circle"></i> Жаңа тапсырма немесе тест қосу</h4>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <input type="text" id="new-week-title" placeholder="Апта атауы (мысалы: 4-Апта: Алгоритмдер)">
-                <input type="text" id="new-task-text" placeholder="Тапсырма атауы (мысалы: 4.1 Массивтер есебін шығару)">
+            <h4 style="margin-bottom: 14px;"><i class="fa-solid fa-plus-circle" style="color: var(--accent-glow);"></i> Жаңа тапсырма / Тест қосу</h4>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <input type="text" id="new-week-title" placeholder="Апта атауы (мысалы: 3-Апта: Python Негіздері)">
+                <input type="text" id="new-task-text" placeholder="Тапсырма (мысалы: 3.1 Циклдар есебін тапсыру)">
                 <input type="url" id="new-test-url" placeholder="Тест сілтемесі (Google Forms / Quizizz URL)">
                 <button class="btn" onclick="addNewContent()"><i class="fa-solid fa-cloud-arrow-up"></i> Қосу және Жаңарту</button>
             </div>
         </div>
 
-        <!-- Students Overview Table -->
+        <!-- Student Progress Table -->
         <div class="user-card">
-            <h4><i class="fa-solid fa-chart-line"></i> Оқушылар прогресі (Бұл құрылғыдағы)</h4>
+            <h4 style="margin-bottom: 10px;"><i class="fa-solid fa-chart-line"></i> Оқушылар прогресі</h4>
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>Оқушы аты</th>
-                        <th>Орындалғаны</th>
+                        <th>Оқушы Аты</th>
+                        <th>Тапсырмалар</th>
                         <th>Прогресс</th>
                     </tr>
                 </thead>
                 <tbody id="curator-student-table">
-                    <!-- Populated dynamically -->
+                    <!-- Populated Dynamically -->
                 </tbody>
             </table>
         </div>
-        
+
         <button class="btn btn-danger" onclick="resetAllData()"><i class="fa-solid fa-trash"></i> Барлық деректерді өшіру</button>
     </div>
 
 </div>
 
 <script>
-    // Initial Default Data Architecture
     const defaultData = {
         weeks: [
             {
                 id: "week1",
-                title: "1-Апта: Негізгі ұғымдар",
+                title: "1-Апта: Кіріспе және Негізгі ұғымдар",
                 tasks: [
-                    { id: "w1_t1", text: "1.1 Дәріс материалын толық оқу" },
-                    { id: "w1_t2", text: "1.2 Практикалық тапсырманы орындау" }
+                    { id: "w1_t1", text: "1.1 Дәріс материалын толық оқып шығу" },
+                    { id: "w1_t2", text: "1.2 Практикалық тапсырмаларды орындау" }
                 ],
                 testUrl: "https://forms.google.com"
             },
             {
                 id: "week2",
-                title: "2-Апта: Шартты операторлар мен Циклдар",
+                title: "2-Апта: Шартты операторлар мен Функциялар",
                 tasks: [
                     { id: "w2_t1", text: "2.1 Теориялық конспект дайындау" },
-                    { id: "w2_t2", text: "2.2 Есептер жинағын шешу" }
+                    { id: "w2_t2", text: "2.2 Кодинг тапсырмасын аяқтау" }
                 ],
                 testUrl: "https://quizizz.com"
             }
         ]
     };
 
-    let currentMode = 'student'; // 'student' or 'curator'
-    let courseData = JSON.parse(localStorage.getItem('student_hub_course')) || defaultData;
-    let studentName = localStorage.getItem('student_hub_name') || 'Оқушы';
+    let currentMode = 'student';
+    let courseData = JSON.parse(localStorage.getItem('infologia_course_data')) || defaultData;
+    let studentName = localStorage.getItem('infologia_student_name') || 'Оқушы';
 
-    // Save Data Helpers
     function saveData() {
-        localStorage.setItem('student_hub_course', JSON.stringify(courseData));
+        localStorage.setItem('infologia_course_data', JSON.stringify(courseData));
     }
 
-    // Toggle Curator / Student Modes
     function toggleMode() {
         const studentView = document.getElementById('student-view');
         const curatorView = document.getElementById('curator-view');
@@ -140,7 +147,6 @@
         }
     }
 
-    // Render Student Dynamic Content
     function renderStudentView() {
         document.getElementById('student-name-input').value = studentName;
         document.getElementById('display-student-name').innerText = `Сәлем, ${studentName}! 👋`;
@@ -172,7 +178,7 @@
             weekCard.innerHTML = `
                 <div class="week-header">
                     <span class="week-title">${week.title}</span>
-                    <i class="fa-regular fa-calendar-check" style="color: var(--primary);"></i>
+                    <i class="fa-regular fa-calendar-check" style="color: var(--accent-glow);"></i>
                 </div>
                 <ul class="task-list">
                     ${tasksHTML}
@@ -183,7 +189,7 @@
                             <i class="fa-solid fa-pen-to-square"></i>
                             <span>Апталық тест тапсырмасы</span>
                         </div>
-                        <a href="${week.testUrl}" target="_blank" class="btn" style="text-decoration:none; font-size:13px; padding: 8px 14px;">
+                        <a href="${week.testUrl}" target="_blank" class="btn" style="text-decoration:none; font-size:13px;">
                             Тестті бастау <i class="fa-solid fa-arrow-right"></i>
                         </a>
                     </div>
@@ -193,13 +199,11 @@
             container.appendChild(weekCard);
         });
 
-        // Calculate Progress
         const percent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
         document.getElementById('progress-percent').innerText = `${percent}%`;
         document.getElementById('progress-fill').style.width = `${percent}%`;
     }
 
-    // Toggle Task Completion State
     function toggleTask(taskId, event) {
         const storageKey = `task_${studentName}_${taskId}`;
         const currentState = localStorage.getItem(storageKey) === 'true';
@@ -207,17 +211,15 @@
         renderStudentView();
     }
 
-    // Save Student Name
     function saveStudentName() {
         const inputVal = document.getElementById('student-name-input').value.trim();
         if (inputVal) {
             studentName = inputVal;
-            localStorage.setItem('student_hub_name', studentName);
+            localStorage.setItem('infologia_student_name', studentName);
             renderStudentView();
         }
     }
 
-    // Curator Function: Add new week/task
     function addNewContent() {
         const weekTitle = document.getElementById('new-week-title').value.trim();
         const taskText = document.getElementById('new-task-text').value.trim();
@@ -243,9 +245,9 @@
         document.getElementById('new-week-title').value = '';
         document.getElementById('new-task-text').value = '';
         document.getElementById('new-test-url').value = '';
+        renderStudentView();
     }
 
-    // Render Curator Table
     function renderCuratorTable() {
         const tbody = document.getElementById('curator-student-table');
         tbody.innerHTML = '';
@@ -273,7 +275,6 @@
         tbody.appendChild(tr);
     }
 
-    // Reset Data
     function resetAllData() {
         if (confirm('Шын мәнінде барлық деректерді өшіргіңіз келе ме?')) {
             localStorage.clear();
@@ -281,6 +282,5 @@
         }
     }
 
-    // Initial Load
     renderStudentView();
 </script>
